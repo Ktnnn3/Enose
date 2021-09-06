@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Center the loader */
+
+        body {
+            font-family: "Poppins", sans-serif;
+            height: 100vh;
+        }
+
+        input[type=submit],
+        a[type=a],
+        input[type=reset] {
+            background-color: #56baed;
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            text-align: right;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 13px;
+            -webkit-box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+            box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+            -webkit-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+            margin: 10px 20px 40px 20px;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -ms-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #loader.settingtime {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 120px;
+            height: 120px;
+            margin: -76px 0 0 -76px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #96bebd;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        #loader.testingtime {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 120px;
+            height: 120px;
+            margin: -76px 0 0 -76px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #00486b;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Add animation to "page content" */
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+
+        #btn {
+            text-align: right;
+        }
+
+        p {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 900;
+            /* text-transform: uppercase; */
+            /* display: inline-block; */
+            margin: 20px 8px 10px 8px;
+            color: #000000;
+        }
+
+        h5 {
+            text-align: center;
+            font-size: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: inline-block;
+            margin: 40px 8px 10px 20px;
+            color: #92badd;
+            padding: 10px;
+        }
+
+        h4 {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: inline-block;
+            margin: 100px 8px 10px 20px;
+            color: #96bebd;
+            padding: 10px;
+        }
+
+        h4.testingtime {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: inline-block;
+            margin: 100px 8px 10px 20px;
+            color: #00486b;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body onload="myFunction()" style="margin:0;">
+
+    <form action="" id="myloader">
+        <div id="loader" class="settingtime"></div>
+        <br><br><br><br><br><br>
+        <center>
+            <h4>Setting time for 30 seconds...</h4>
+        </center>
+    </form>
+
+
+    <form action="" id="mytestingloader" style="display:none;">
+        <div id="loader" class="testingtime"></div>
+        <br><br><br><br><br><br>
+        <center>
+            <h4 class="testingtime">Testing time for 60 seconds...</h4>
+        </center>
+    </form>
+
+
+
+    <form action="">
+        <div style="display:none;" id="myDiv" class="animate-bottom">
+            <h5>Electronic Nose</h5>
+            <p>Detect Fungi Order, The result is...</p>
+            <br><br>
+            <p>GOOD</p>
+            <img src="./check.png" style="width:150px;height:150px;" id="icon" </div>
+            <br><br><br><br>
+    </form>
+
+    <form id="btn"><a type="a" id="submit" href="./mode.html">back</a></form>
+
+
+    <script>
+        var myVar;
+        var myVar2;
+
+
+        function myFunction() {
+            myVar = setTimeout(showPage, 30000);
+            myVar = setTimeout(showPage2,90000);
+        }
+
+        function showPage() {
+            document.getElementById("myloader").style.display = "none";
+            document.getElementById("mytestingloader").style.display = "block";
+        }
+        
+        function showPage2() {
+            document.getElementById("mytestingloader").style.display = "none";
+            document.getElementById("myDiv").style.display = "block";
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
