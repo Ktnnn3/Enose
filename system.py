@@ -15,6 +15,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import time
+import connect
+import json
 class AdventureDone(Exception): pass
 
 
@@ -25,7 +27,7 @@ spi.max_speed_hz = 1000000
 plt.rcParams['animation.html'] = 'jshtml'
 fig = plt.figure()
 ax = fig.add_subplot(111)
-fig.show()
+#fig.show()
 
 relay1_pump = 17
 relay2_sol = 27
@@ -99,6 +101,12 @@ def round_four(num):
     else:
         return xnum/10.0
 
+def round_ans(num):
+    if num > 0.4:
+        return 1
+    else:
+        return 0
+
 
 def calSensor(a, b, Max):
     print(a[len(a)-1])
@@ -116,6 +124,7 @@ def calSensor(a, b, Max):
 
 def checkNegativeSlope():
     print('sumcheck = ', sum(check))
+    print('check = ',check)
     # print(y[6])
     if sum(lastcheck) != 7:
         for i in range(len(check)):
@@ -140,14 +149,34 @@ def area(a):
         return a[0]
 
 
+B00=connect.B0
+B01=connect.B1
+B02=connect.B2
+B03=connect.B3
+B04=connect.B4
+B05=connect.B5
+B06=connect.B6
+
 def prediction(a):
-    g0 = a[0]*(1.29086995124816)
-    g1 = a[1]*(-0.475657880306244)
-    g2 = a[2]*(-0.100802682340145)
-    g3 = a[3]*(-0.173830837011337)
-    g4 = a[4]*(0.33036082983017)
-    g5 = a[5]*(0.58828580379486)
-    g6 = a[6]*(0.303013116121292)
+    cond1 = B00 == 0.0 and B01== 0.0 and B02 == 0.0 and B03 == 0.0
+    cond2 = B04 == 0.0 and B05 == 0.0 and B06 == 0.0
+    if cond1 and cond2 == False:
+        g0 = a[0]*(1.29086995124816)
+        g1 = a[1]*(-0.475657880306244)
+        g2 = a[2]*(-0.100802682340145)
+        g3 = a[3]*(-0.173830837011337)
+        g4 = a[4]*(0.33036082983017)
+        g5 = a[5]*(0.58828580379486)
+        g6 = a[6]*(0.303013116121292)
+    else:
+        g0 = a[0]*B00
+        g1 = a[1]*B01
+        g2 = a[2]*B02
+        g3 = a[3]*B03
+        g4 = a[4]*B04
+        g5 = a[5]*B05
+        g6 = a[6]*B06
+
     ans = g0+g1+g2+g3+g4+g5+g6
     return ans
 
@@ -201,10 +230,7 @@ def testing_time():
     timeout = 1
     #1*60=60 sec
     #5*60=300 sec
-    t_end = time.time()+timeout*60
-    GPIO.output(relay1_pump, GPIO.HIGH)
-    GPIO.output(relay2_sol, GPIO.LOW)
-    GPIO.output(relay3_sol, GPIO.LOW)
+    # t_end = time.time()+timeout*60
 
     try:
         while True :
@@ -231,14 +257,14 @@ def testing_time():
                 windows5 = graphsensor5_s.rolling(100).mean().tolist()
                 windows6 = graphsensor6_s.rolling(100).mean().tolist()
 
-                ax.plot(windows0, color='b')
-                ax.plot(windows1, color='r')
-                ax.plot(windows2, color='g')
-                ax.plot(windows3, color='c')
-                ax.plot(windows4, color='m')
-                ax.plot(windows5, color='y')
-                ax.plot(windows6, color='k')
-                fig.canvas.draw()
+                # ax.plot(windows0, color='b')
+                # ax.plot(windows1, color='r')
+                # ax.plot(windows2, color='g')
+                # ax.plot(windows3, color='c')
+                # ax.plot(windows4, color='m')
+                # ax.plot(windows5, color='y')
+                # ax.plot(windows6, color='k')
+                #fig.canvas.draw()
 
                 win[0].append(windows0[x-1])
                 win[1].append(windows1[x-1])
@@ -251,6 +277,9 @@ def testing_time():
                 if(cutvar == 0):
                     for i in range(len(cutoff)):
                         cutoff_func()
+                GPIO.output(relay1_pump, GPIO.HIGH)
+                GPIO.output(relay2_sol, GPIO.LOW)
+                GPIO.output(relay3_sol, GPIO.LOW)
             
 
 
@@ -271,46 +300,40 @@ def testing_time():
             pass
 
 def setting_time():
-    timeout = 0.5
-    t_end = time.time()+timeout*60
-    GPIO.output(relay1_pump, GPIO.HIGH) # Turn LED on
+    # timeout = 0.5
+    # t_end = time.time()+timeout*60
+    GPIO.output(relay1_pump, GPIO.LOW) # Turn LED on
         #time.sleep(1)
     GPIO.output(relay2_sol, GPIO.HIGH)
     GPIO.output(relay3_sol, GPIO.LOW)
-    dosth=0
-    while time.time() < t_end:
-       dosth = dosth+1
-    print(dosth)
+    time.sleep(25)
      
         
 
 def reco_time():
-    timeout = 0.5
-    t_end = time.time()+timeout*60
+    # timeout = 0.5
+    # t_end = time.time()+timeout*60
     GPIO.output(relay1_pump, GPIO.HIGH) # Turn LED on
     GPIO.output(relay2_sol, GPIO.LOW)
     GPIO.output(relay3_sol, GPIO.HIGH)
-    dosth=0
-    while time.time() < t_end:
-       dosth = dosth+1
-    print(dosth)
+    time.sleep(25)
+
+def writeToJSONFile(path, fileName, data):
+    filePathNameWExt = './' + path + '/' + fileName + '.json'
+    with open(filePathNameWExt, 'w') as fp:
+        json.dump(data, fp)
 
 
 
 # Define delay between readings
 # while time.time() < timeout_start + timeout and x < timeout*100:
-while True:
-    print('setting time...')
-    setting_time()
-    print('testing time...')
-    testing_time()
-    print('recovery time...')
-    reco_time()
-    break
-    
+print('setting time...')
+setting_time()
+print('testing time...')
+testing_time()
 print('len graphsensor0 = ',len(graphsensor0))
 #print('graphsensor0 = ',graphsensor0)
-print('win0 = ',win[0])
+#print('win0 = ',win[0])
 for i in range(len(y)):
     print("y{} : {}".format(i,y[i]))
 print('check =',check)
@@ -325,8 +348,20 @@ finalarea[4] = area(y[4])
 finalarea[5] = area(y[5])
 finalarea[6] = area(y[6])
 print(finalarea)
-print(prediction(finalarea))
+result_number = prediction(finalarea)
+print(result_number)
+result_for_last = round_ans(result_number)
+print(result_for_last)
+passvar = 55555.55
+path = './'
+filename = 'datafile'
+data = {}
+data['results_number'] = result_number
+data['results_last'] = result_for_last
 
+writeToJSONFile(path,filename,data)
+print('recovery time...')
+reco_time()
 
 
 
